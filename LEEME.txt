@@ -1,0 +1,114 @@
+La entrada para esta segunda decodificacion se llama 'valores.txt'
+
+La primera linea de esta entrada, contiene un entero positivo (n), seguido de otro entero positivo (p) separados por un espacio
+
+La segunda linea contiene n valores decimales separados por un espacio (ejemplo: n=3 ==> 3.254 1.543 2.555)
+
+*IMPORTANTE* estos valores tienen que cubrir las n ciudades, esto quiere decir que las partes enteras de estos numeros tienen que ser
+desde 1 hasta n, sin repetirse (ejemplo: n=5 ==> 5.445 2.4324 3.111 1.999 4.983)
+
+Luego de tener esta segunda linea, se ordenan los valores pero según la parte decimal que tenga cada uno de estos números reales, por ejemplo, para el problema
+3.258 > 9.111. Al programar el código se utiliza la funcion floor, que retorna la aproximación de un numero decimal al numero entero más cercano hacia abajo.
+
+EJEMPLO PARA DETERMINAR LA RUTA DE RECOLECCION: n=5, p=2 : Entrada=> 5.445 2.4324 3.111 1.999 4.983 ==Ordenamos> 3.111 2.4324 5.445 4.983 1.999 ==> Ruta: 3 2 5 4 1
+
+Las siguientes n lineas contendrán: Solo un uno (1), o máximo 'i' ceros(0), con i=min(k-1,p), con k={1,2,..,n} (representa al numero
+de la iteración actual). Si i=0, solo se puede poner un 1.
+Estas lineas anteriormente mencionadas serviran para determinar el plan de carga.
+
+El proceso para determinar el plan de carga se hace en n pasos, iterativamente. Si el programa lee una linea que contiene un 1, se agrega al plan de carga la
+posición (número de la iteración en que se encuentra el programa) de la ruta de recolección. Por el contrario si el programa lee una linea con uno o más 0
+lo va a reconocer como si se tuvieran que sacar cajas del camión, la cantidad de veces que aparezca un 0. Estas cajas que se sacan se mantienen como candidatos, además
+se agrega también el valor de de la posición de la ruta de recolección de la iteración actual. Esta estructura con posibles candidatos se ordena de MAYOR A MENOR (según
+su parte decimal) y luego se agregan estos valores a la ruta de recolección. Se repiten estos pasos hasta completar las n iteraciones.
+
+EJEMPLO PARA DETERMINAR EL PLAN DE CARGA: 
+
+Con la ruta de recolección anteriormente obtenida: 3 2 5 4 1, y también considerar la lista ordenada con sus partes decimales 3.111 2.4324 5.445 4.983 1.999
+
+Con las siguientes lineas:
+
+1
+1
+0 0
+0
+1
+
+Primera iteracion:
+
+*Se lee un 1* ==> Plan de carga: 3.111 ==> 3
+
+Segunda iteración:
+
+*Se lee un 1* ==> Plan de carga: 3.111 2.4324 ==> 3 2
+
+Tercera iteración:
+
+*Se leen dos 0, por lo tanto hay que sacar 2 cajas* ==> Plan de carga: Vacio, Candidatos: 2.4324 3.111 5.445 (Notar que se agregó la posicion 3 de la ruta de recoleccion)
+==> Se ordenan en reverse segun su parte decimal: 5.445 2.4324 3.111 ==Se agregan al plan de carga>  Plan de carga: 5.445 2.4324 3.111 ==> 5 2 3
+
+Cuarta iteración:
+
+*Se lee un 0, hay que sacar 1 caja* ==> Plan de carga 5.445 2.4324, Candidatos: 3.111 4.983, Se ordenan en reverse segun parte decimal==>
+Candidatos: 4.983 3.111 ==Se agregan al plan de carga> 5.445 2.4324 4.983 3.111 ==> Plan de carga: 5 2 4 3
+
+Quinta iteración: 
+
+*Se lee un 1* ==> Plan de carga: 5.445 2.4324 4.983 3.111 1.999 ==> Plan de carga: 5 2 4 3 1
+
+*FIN PLAN DE CARGA*
+
+
+Las siguientes n lineas contendrán: Solo un uno (1), o máximo 'i' ceros(0), con i=min(n-k,p) con k={1,2,..,n} (representa al numero
+de la iteración actual). Si i=0, solo se puede poner un 1.
+Estas lineas anteriormente mencionadas serviran para determinar el plan de descarga.
+
+Al igual que para el plan de descarga, si se lee un 1 significa que hay agregar, si lee 0 hay que quitar cajas. Para el plan de carga funciona así:
+Si lee un 1 agregamos al plan de descarga la ultima posicion del plan de carga anteriormente determinado. Como ya se agregó esta caja (al plan de descarga), también hay que quitarla 
+de la pila del plan de carga. 
+Si se lee un 0 se quitan (la cantidad de 0 leidos) cajas del plan de carga actualmente y se agrega al plan de descarga la caja que esté mas al exterior. Las cajas 
+que se quitaron del plan de carga entran a una lista de candidatos, se ordenan (esta vez de menor a mayor) segun su parte decimal, y se vuelven a agregar en ese orden al
+plan de carga.
+
+Este proceso se repite por cada una de las n lineas que corresponden al plan de descarga. El plan de carga al final queda vacío y el plan de descarga lleno.
+
+EJEMPLO PLAN DE DESCARGA: 
+
+Considerando el plan de carga anteriormente determinado: Plan de carga: 5.445 2.4324 4.983 3.111 1.999 ==> Plan de carga: 5 2 4 3 1
+Y las siguientes n lineas:
+
+0 0
+1
+1
+1
+1
+
+Primera iteración:
+
+*Se leen dos 0, hay que sacar 2 cajas* Plan de carga: 5.445 2.4324 4.983, Plan de DESCARGA: 4.983 ==> 4 
+Hay que reponer las cajas que se sacaron: Candidatos: 1.999 3.111 ==Ordenamos segun parte decimal> 3.111 1.999 ==Se vuelven a agregar al plan de carga>:
+Plan de carga: 5.445 2.4324 3.111 1.999
+
+Segunda iteracion:
+
+*Se lee un 1* ==> Hay que agregar la ultima caja del plan de carga, al plan de descarga ==> Plan de DESCARGA: 4.983 1.999 ==> 4 1
+Plan de carga: 5.445 2.4324 3.111
+
+Tercera iteración:
+
+*Se lee un 1* ==> Hay que agregar la ultima caja del plan de carga, al plan de descarga ==> Plan de DESCARGA: 4.983 1.999 3.111==> 4 1 3
+Plan de carga: 5.445 2.4324  
+
+Cuarta iteración:
+*Se lee un 1* ==> Hay que agregar la ultima caja del plan de carga, al plan de descarga ==> Plan de DESCARGA: 4.983 1.999 3.111 2.4324 ==> 4 1 3 2
+Plan de carga: 5.445 
+
+Quinta iteración:
+*Se lee un 1* ==> Hay que agregar la ultima caja del plan de carga, al plan de descarga ==> Plan de DESCARGA: 4.983 1.999 3.111 2.4324 5.445 ==> 4 1 3 2 5
+Plan de carga: VACIO
+
+
+*FIN PLAN DE DESCARGA*
+
+
+Profe, espero que se haya entendido mi lógica, un saludo.
